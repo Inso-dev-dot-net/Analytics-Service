@@ -1,0 +1,62 @@
+# docker-compose.yml                                   # Имя файла по умолчанию для запуска `docker compose up`
+
+services:                                               # Раздел со всеми контейнерами (сервисами), которые нужно поднять
+
+  redpanda:                                             # Имя сервиса (это же DNS-имя в сети Compose)
+    image: docker.redpanda.com/redpandadata/redpanda:latest   # Официальный образ Redpanda (Kafka-совместимый брокер)
+    command: [                                          # Переопределяем команду запуска контейнера
+      "redpanda","start",                               # Запускаем процесс redpanda в режиме брокера
+      "--overprovisioned",                              # Режим для локалки: смягчает требования по ресурсам
+      "--smp","1",                                      # Ограничиваем количество CPU-шардов до 1 (экономим ресурсы)
+      "--memory","512M",                                # Выделяем 512М оперативной памяти (для локалки достаточно)
+      "--reserve-memory","0M",                          # Не резервируем доп. память
+      "--node-id","0",                                  # Идентификатор узла (в сингл-брокере пусть будет 0)
+      "--kafka-addr","PLAINTEXT://0.0.0.0:9092",        # Слушаем Kafka API на 0.0.0.0:9092 внутри контейнера
+      "--advertise-kafka-addr","PLAINTEXT://redpanda:9092"    # Адрес, который брокер «рекламирует» клиентам в сети Compose
+    ]
+    ports:                                              # Пробрасываем порты контейнера на хост
+      - "9092:9092"                                     # Делаем Kafka API доступным на localhost:9092
+
+  console:                                              # Веб-интерфейс для Redpanda/Kafka (Redpanda Console)
+    image: docker.redpanda.com/redpandadata/console:latest    # Официальный образ Redpanda Console
+    environment:                                        # Переменные окружения для настройки консоли
+      KAFKA_BROKERS: redpanda:9092                      # Консоль коннектится к брокеру по внутреннему DNS-имени redpanda:9092
+    ports:
+      - "8082:8080"                                     # Открываем UI консоли на http://localhost:8082
+    depends_on:                                         # Говорим Compose: запускать этот сервис после зависимостей
+      - redpanda                                        # Console стартует после redpanda (чтобы было к чему подключаться)
+
+  postgres:                                             # Реляционная БД PostgreSQL
+    image: postgres:16                                  # Официальный образ Postgres (ветка 16)
+    environment:                                        # Базовые переменные окружения образа
+      POSTGRES_USER: app                                # Имя пользователя БД
+      POSTGRES_PASSWORD: app                            # Пароль пользователя БД (локально — просто)
+      POSTGRES_DB: analytics                            # Имя стартовой БД
+    ports:
+      - "5432:5432"                                     # Открываем PostgreSQL на localhost:5432
+    volumes:                                            # Том(а) с сохранением данных/инициализацией
+      - pgdata:/var/lib/postgresql/data                 # Постоянное хранилище данных БД
+      - ./db/init:/docker-entrypoint-initdb.d:ro        # SQL-скрипты инициализации (создание таблиц и т.д.), read-only
+
+  pgadmin:                                              # Веб-GUI для управления Postgres
+    image: dpage/pgadmin4:8                             # Официальный образ pgAdmin 4 (ветка 8)
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com          # Логин администратора pgAdmin (почта)
+      PGADMIN_DEFAULT_PASSWORD: grtfgrtf                   # Пароль для входа в pgAdmin
+    ports:
+      - "8081:80"                                       # Открываем UI pgAdmin на http://localhost:8081
+    depends_on:
+      - postgres                                        # Запускать после Postgres (нужна доступность БД)
+
+  grafana:                                              # Grafana для дашбордов (будем подключать Postgres как datasource)
+    image: grafana/grafana:latest                       # Официальный образ Grafana OSS (последний стабильный)
+    ports:
+      - "3000:3000"                                     # Открываем UI Grafana на http://localhost:3000
+    depends_on:
+      - postgres                                        # Наличие БД пригодится при первичной настройке источника
+    volumes:
+      - grafana-data:/var/lib/grafana                   # Персистим данные Grafana (настройки, дашборды, источники)
+
+volumes:                                                # Объявляем именованные тома (создастся автоматически)
+  pgdata:                                               # Том для данных PostgreSQL
+  grafana-data:                                         # Том для данных Grafana (не потерять дашборды/настройки)

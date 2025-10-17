@@ -1,0 +1,104 @@
+## ===== OS / Editors =====
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# VS Code
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+# JetBrains Rider / IntelliJ
+.idea/
+*.sln.iml
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## ===== .NET build artifacts =====
+# Build output
+bin/
+obj/
+# Publish output
+**/publish/
+**/out/
+# NuGet
+*.nupkg
+# Paket (если когда-нибудь появится)
+.paket/
+packages/
+# Dotnet local tools
+.dotnet-tools/
+
+## ===== Logs / Temp / Cache =====
+*.log
+logs/
+Log/
+**/TestResults/
+TestResult.xml
+TestResults.xml
+.trx
+coverage/
+coverage.cobertura.xml
+.coverage
+*.coverage
+*.coveragexml
+
+# Analyzers / Sonar
+.sonarqube/
+.scannerwork/
+
+## ===== Resharper / Analyzers (JetBrains/VS) =====
+_ReSharper.Caches/
+*.DotSettings.user
+*.vc.db
+
+## ===== Secrets & local config =====
+# Пользовательские секреты .NET
+secrets.json
+# Сертификаты / ключи
+*.pfx
+*.p12
+*.pem
+*.key
+# Локальные env-файлы
+.env
+.env.*
+
+## ===== Docker / Compose =====
+docker-compose.override.yml
+docker-data/
+volumes/
+
+## ===== Database stuff =====
+
+*.dump
+*.bak
+*.backup
+*.sql~        # временные файлы редакторов
+
+## ===== Front-end (на будущее, вдруг подключим клиент/-чарты) =====
+node_modules/
+dist/
+npm-debug.log*
+yarn-error.log
+
+## ===== Templating / scaffolding noise =====
+*.orig
+*.rej
+
+## ===== OS-specific trash =====
+$RECYCLE.BIN/
+*.stackdump
