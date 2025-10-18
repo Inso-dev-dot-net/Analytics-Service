@@ -8,24 +8,42 @@ namespace Analytics.Api.Controllers;
 [Route("events")]
 public class EventsController : ControllerBase
 {
+    ILogger<EventsController> _logger;
     IEventProducer _producer;
-    //ILogger _logger;
 
-    public EventsController(ILogger logger, IEventProducer producer)
+    public EventsController(ILogger<EventsController> logger, IEventProducer producer)
     {
-        //_logger = logger;
+        _logger = logger;
         _producer = producer;
     }
 
     [HttpPost]
+    [Consumes("application/json")]
+    [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status202Accepted)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status413PayloadTooLarge)]
     public async Task<IActionResult> Post([FromBody] IReadOnlyCollection<EventDto> events, CancellationToken ct)
     {
-        if (ModelState.IsValid)
-        {
-            await _producer.ProduceBatchAsync(events, ct);
-            return Accepted();
-        }
-        else return BadRequest();
+        if (events is null || events.Count == 0)
+            return ValidationProblem(title: "Empty batch", detail: "Provide at least one event.");
+
+        const int MaxBatchSize = 10_000;
+        if (events.Count > MaxBatchSize)
+            return Problem(
+                statusCode: StatusCodes.Status413PayloadTooLarge,
+                title: "Payload Too Large",
+                detail: $"Maximum batch size is {MaxBatchSize} events."
+            );
+
+        await _producer.ProduceBatchAsync(events, ct);
+
+        var tenants = events
+        .GroupBy(e => e.TenantId)
+        .ToDictionary(g => g.Key, g => g.Count());
+
+        _logger.LogInformation($"Accepted {events.Count} events across {tenants.Count} tenants: {tenants}");
+
+        return Accepted();
     }
 }
