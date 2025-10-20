@@ -42,7 +42,7 @@ public class EventsController : ControllerBase
         .GroupBy(e => e.TenantId)
         .ToDictionary(g => g.Key, g => g.Count());
 
-        _logger.LogInformation($"Accepted {events.Count} events across {tenants.Count} tenants: {tenants}");
+        _logger.LogInformation("Accepted {events.Count} events across {tenants.Count} tenants: {tenants}", events.Count, tenants.Count, tenants);
 
         return Accepted();
     }
