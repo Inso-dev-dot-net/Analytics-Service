@@ -12,13 +12,13 @@ public sealed class KafkaOptions
     [Required, MinLength(1)]
     public string Topic { get; init; } = "events";
 
-    public string? ClientId { get; init; }
+    public string? ClientId { get; init; } = "api";
 
     /// <summary>
     /// Acknowledgements: "0" | "1" | "all"
     /// </summary>
     [RegularExpression("^(0|1|all)$", ErrorMessage = "Acks must be '0', '1' or 'all'.")]
-    public string? Acknowledgement { get; init; } = "1";
+    public string? Acks { get; init; } = "1";
 
     /// <summary>
     /// Producer linger (ms)
@@ -40,5 +40,5 @@ public sealed class KafkaOptions
     [RegularExpression("^(gzip|snappy|lz4|zstd)$", ErrorMessage = "CompressionType must be gzip|snappy|lz4|zstd.")]
     public string? CompressionType { get; init; } = "gzip";
 
-    public string? GroupId { get; set; }
+    public string? GroupId { get; init; }
 }
