@@ -1,6 +1,6 @@
 using Analytics.Aggregator.Services;
 using Analytics.Contracts.Options;
-using Microsoft.Extensions.Hosting;
+
 using Microsoft.Extensions.Options;
 
 namespace Analytics.Aggregator.Workers;

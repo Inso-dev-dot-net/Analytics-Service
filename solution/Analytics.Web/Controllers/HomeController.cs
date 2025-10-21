@@ -1,6 +1,8 @@
 using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
+
 using Analytics.Web.Models;
+
+using Microsoft.AspNetCore.Mvc;
 
 namespace Analytics.Web.Controllers;
 

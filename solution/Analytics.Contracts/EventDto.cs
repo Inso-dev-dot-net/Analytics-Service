@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace Analytics.Contracts;
 
@@ -13,10 +13,10 @@ public sealed class EventDto
 
     [Required, MinLength(1)]
     public string Type { get; init; } = default!;
-    
+
     [Required]
     public DateTimeOffset Timestamp { get; init; }
-    
+
     [Required]
     public Dictionary<string, object?> Properties { get; init; } = new();
 }

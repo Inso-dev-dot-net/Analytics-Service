@@ -1,8 +1,7 @@
-using System.Text.Json;
 using Analytics.Contracts.Options;
 using Analytics.Ingestor.Messaging;
 using Analytics.Ingestor.Storage;
-using Microsoft.Extensions.Hosting;
+
 using Microsoft.Extensions.Options;
 
 

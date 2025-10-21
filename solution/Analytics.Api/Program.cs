@@ -13,7 +13,7 @@ builder.Services.AddOptions<DatabaseOptions>()
     .BindConfiguration(DatabaseOptions.SectionName)
     .ValidateDataAnnotations()
     .ValidateOnStart();
-    
+
 builder.Services.AddOptions<KafkaOptions>()
     .BindConfiguration(KafkaOptions.SectionName)
     .ValidateDataAnnotations()

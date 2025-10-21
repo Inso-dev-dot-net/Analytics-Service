@@ -1,5 +1,6 @@
 using Analytics.Api.Messaging;
 using Analytics.Contracts;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace Analytics.Api.Controllers;

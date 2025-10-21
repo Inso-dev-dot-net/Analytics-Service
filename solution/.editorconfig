@@ -1,0 +1,107 @@
+﻿root = true
+
+# -------------------------------------------------
+# Глобальные правила .NET анализаторов (не ломают билд)
+# -------------------------------------------------
+# Стиль — предупреждения, дизайн/надёжность — предупреждения (можно усилить позже)
+dotnet_analyzer_diagnostic.category-Style.severity = warning
+dotnet_analyzer_diagnostic.category-Design.severity = warning
+dotnet_analyzer_diagnostic.category-Usage.severity  = warning
+dotnet_analyzer_diagnostic.category-Reliability.severity = warning
+dotnet_analyzer_diagnostic.category-Performance.severity = warning
+
+# Быстрые “гигиенические” ошибки (сразу видны)
+dotnet_diagnostic.IDE0005.severity = error   # удалить неиспользуемые using
+dotnet_diagnostic.IDE0055.severity = warning # форматировать документ
+dotnet_diagnostic.CA2254.severity  = warning # шаблон логгера должен быть константой
+
+# -------------------------------------------------
+# C# базовые формат/стиль
+# -------------------------------------------------
+[*.cs]
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+charset = utf-8
+
+# Пространства имён и скобки
+csharp_style_namespace_declarations = file_scoped:warning
+csharp_new_line_before_open_brace = all
+
+# using’и
+dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = true
+
+# var / new() — под твои предпочтения
+csharp_style_var_for_built_in_types = false:warning
+csharp_style_var_when_type_is_apparent = false:warning
+csharp_style_var_elsewhere = false:warning
+csharp_style_implicit_object_creation_when_type_is_apparent = true:warning   # Type x = new();
+
+# Инициализаторы, именованные аргументы и т.п.
+dotnet_style_object_initializer = true:suggestion
+dotnet_style_collection_initializer = true:suggestion
+dotnet_style_prefer_inferred_tuple_names = true:suggestion
+dotnet_style_prefer_inferred_anonymous_type_member_names = true:suggestion
+dotnet_style_named_arguments = true:suggestion
+
+# Выражения/шаблоны
+csharp_style_pattern_local_over_anonymous_function = true:suggestion
+csharp_style_prefer_switch_expression = true:suggestion
+csharp_style_prefer_readonly_struct = true:suggestion
+csharp_style_prefer_readonly = true:suggestion
+
+# Префиксы this. не навязываем
+dotnet_style_qualification_for_field = false:suggestion
+dotnet_style_qualification_for_property = false:suggestion
+dotnet_style_qualification_for_method = false:suggestion
+dotnet_style_qualification_for_event = false:suggestion
+
+# -------------------------------------------------
+# Нейминг (часто используемый)
+# -------------------------------------------------
+dotnet_naming_rule.private_fields_underscore.severity = warning
+dotnet_naming_rule.private_fields_underscore.symbols  = private_fields
+dotnet_naming_rule.private_fields_underscore.style    = prefix_underscore
+
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+dotnet_naming_symbols.private_fields.required_modifiers =
+
+dotnet_naming_style.prefix_underscore.capitalization = camel_case
+dotnet_naming_style.prefix_underscore.required_prefix = _
+
+# Async-методы оканчиваются на Async
+dotnet_naming_rule.async_methods_end_with_async.severity = warning
+dotnet_naming_rule.async_methods_end_with_async.symbols  = async_methods
+dotnet_naming_rule.async_methods_end_with_async.style    = end_with_async
+
+dotnet_naming_symbols.async_methods.applicable_kinds = method
+dotnet_naming_symbols.async_methods.applicable_accessibilities = *
+dotnet_naming_symbols.async_methods.required_modifiers =
+dotnet_naming_symbols.async_methods.required_suffix =
+
+dotnet_naming_style.end_with_async.capitalization = pascal_case
+dotnet_naming_style.end_with_async.required_suffix = Async
+
+# Константы в PASCAL_CASE
+dotnet_naming_rule.const_pascal.severity = suggestion
+dotnet_naming_rule.const_pascal.symbols  = const_symbols
+dotnet_naming_rule.const_pascal.style    = pascal_const
+
+dotnet_naming_symbols.const_symbols.applicable_kinds = field
+dotnet_naming_symbols.const_symbols.required_modifiers = const
+dotnet_naming_style.pascal_const.capitalization = pascal_case
+
+# -------------------------------------------------
+# Тесты: допускаем имена с Under_Scores
+# -------------------------------------------------
+[*.Tests.cs]
+dotnet_naming_rule.test_methods_allow_underscores.severity = silent
+dotnet_naming_rule.test_methods_allow_underscores.symbols  = test_methods
+dotnet_naming_rule.test_methods_allow_underscores.style    = allow_underscores
+
+dotnet_naming_symbols.test_methods.applicable_kinds = method
+dotnet_naming_symbols.test_methods.applicable_accessibilities = public
+dotnet_naming_style.allow_underscores.capitalization = pascal_case
+dotnet_naming_style.allow_underscores.word_separator = _

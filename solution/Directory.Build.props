@@ -1,0 +1,14 @@
+﻿<Project>
+  <PropertyGroup>
+    <!-- Единый язык и таргеты -->
+    <LangVersion>latestMajor</LangVersion>
+    <Nullable>enable</Nullable>
+
+    <!-- Включаем анализаторы .NET SDK во всех проектах -->
+    <AnalysisLevel>latest</AnalysisLevel>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+
+    <!-- При желании можно усилить строгость: 
+         <TreatWarningsAsErrors>true</TreatWarningsAsErrors> -->
+  </PropertyGroup>
+</Project>

@@ -1,4 +1,5 @@
 using Analytics.Web.Models;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace Analytics.Web.Controllers;
