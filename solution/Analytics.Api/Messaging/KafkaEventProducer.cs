@@ -99,14 +99,33 @@ public sealed class KafkaEventProducer : IEventProducer, IAsyncDisposable
 
     }
 
-    public Task ProduceBatchAsync(IEnumerable<EventDto> events, CancellationToken ct)
+    public async Task ProduceBatchAsync(IEnumerable<EventDto> events, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(events);
+        if (!events.Any()) return;
+
+        int count = 0;
+        try
+        {
+            foreach (EventDto e in events)
+            {
+                await ProduceAsync(e, ct);
+                count++;
+            }
+
+            _logger.LogInformation("Produced batch of {Count} events to {Topic}", count, _topic);
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
     }
 
     public ValueTask DisposeAsync()
     {
-        throw new NotImplementedException();
+        _producer.Flush(TimeSpan.FromSeconds(5));
+        _producer.Dispose();
+        return ValueTask.CompletedTask;
     }
 
 }
