@@ -83,7 +83,7 @@ public sealed class KafkaEventProducer : IEventProducer, IAsyncDisposable
                 ct
             );
 
-            _logger.LogInformation("Produced event to {Topic} at {Tpo} with {Status} (key={key}",
+            _logger.LogInformation("Produced event to {Topic} at {TopicPartitionOffset} with {Status} (key={Key})",
                 result.Topic, result.TopicPartitionOffset, result.Status, key);
 
         }
@@ -93,7 +93,7 @@ public sealed class KafkaEventProducer : IEventProducer, IAsyncDisposable
         }
         catch (ProduceException<string, string> ex)
         {
-            _logger.LogError(ex, "Producing failed for {topic} (key={key}): {reason} (code={code}", _topic, key, ex.Error.Reason, ex.Error.Code);
+            _logger.LogError(ex, "Producing failed for {Topic} (key={Key}): {Reason} (code={Code})", _topic, key, ex.Error.Reason, ex.Error.Code);
             throw;
         }
 
