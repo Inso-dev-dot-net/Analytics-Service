@@ -23,7 +23,7 @@ builder.Services.AddOptions<KafkaOptions>()
 builder.Services.AddControllers();
 
 // TODO: Реализовать EventProducer
-builder.Services.AddSingleton<IEventProducer, NoOpEventProducer>();
+builder.Services.AddSingleton<IEventProducer, KafkaEventProducer>();
 
 //Swagger
 builder.Services.AddEndpointsApiExplorer();
