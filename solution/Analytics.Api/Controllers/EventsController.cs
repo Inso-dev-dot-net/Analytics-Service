@@ -1,5 +1,7 @@
-using Analytics.Api.Messaging;
+﻿using Analytics.Api.Messaging;
 using Analytics.Contracts;
+
+using Confluent.Kafka;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,7 +26,7 @@ public class EventsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status202Accepted)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status413PayloadTooLarge)]
-    public async Task<IActionResult> Post([FromBody] IReadOnlyCollection<EventDto> events, CancellationToken ct)
+    public async Task<IActionResult> PostAsync([FromBody] IReadOnlyCollection<EventDto> events, CancellationToken ct)
     {
         if (events is null || events.Count == 0)
             return ValidationProblem(title: "Empty batch", detail: "Provide at least one event.");
@@ -46,5 +48,40 @@ public class EventsController : ControllerBase
         _logger.LogInformation("Accepted {events.Count} events across {tenants.Count} tenants: {tenants}", events.Count, tenants.Count, tenants);
 
         return Accepted();
+    }
+
+    [HttpPost("test")]
+    [ProducesResponseType(StatusCodes.Status202Accepted)]
+    public async Task<IActionResult> GenerateTestAsync(CancellationToken ct)
+    {
+        List<EventDto> events = new();
+
+        for (int i = 0; i < 3; i++)
+        {
+            EventDto eventDto = new()
+            {
+                UserId = $"u{i}",
+                SessionId = $"s{i}",
+                Type = "page_view",
+                Timestamp = DateTimeOffset.UtcNow,
+                Properties = { { "path", $"/pricing/{i}" }, { "referrer", $"buy{i}" } },
+                TenantId = "demo-tenant"
+            };
+            events.Add(eventDto);
+        }
+
+        try
+        {
+            await _producer.ProduceBatchAsync(events, ct);
+
+            _logger.LogInformation("Produced {Count} events from events/test", events.Count);
+            return Accepted($"{events.Count}");
+        }
+        catch(ProduceException<string, string> ex)
+        {
+            //TODO: Как правильно обрабатывать OperationCanceledException? мы же не можем пробрасывать?
+            _logger.LogError("Operation failed with {Message}", ex.Message);
+            return BadRequest(ex.Message);
+        }
     }
 }
